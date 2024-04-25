@@ -1,13 +1,6 @@
-import {
-  Button,
-  Checkbox,
-  Group,
-  Slider,
-  Tooltip,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconInfoCircle } from "@tabler/icons-react";
 import React, { useState } from "react";
+import { Button, Checkbox, Group, MantineProvider, Slider, Tooltip, createTheme } from "@mantine/core";
+import { IconInfoCircle } from "@tabler/icons-react";
 
 interface ReminderItemProps {
   reminder: { id: number; label: string; description: string };
@@ -18,30 +11,44 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ reminder, enabled }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [time, setTime] = useState(30);
 
-  const handleChange = (value: number) => setTime(value);
+  const handleChange = (value: number) => {
+    setTime(value);
+    if (isChecked && enabled && Notification.permission === "granted") {
+      setTimeout(() => {
+        new Notification(`Time to ${reminder.label}!`);
+      }, value * 60000);
+    }
+  };
 
-  const [opened, { close, open }] = useDisclosure(false);
+  const theme = createTheme({
+    cursorType: "pointer",
+  });
 
   return (
-    <Group grow mih={60}>
+    <Group mih={60} justify="space-between">
       <Group justify="flex-start" gap={0}>
-        <Checkbox
-          label={reminder.label}
-          checked={isChecked && enabled}
-          onChange={() => setIsChecked(!isChecked)}
-          disabled={!enabled}
-          color="green"
-          p={0}
-          m={0}
-        />
+        <MantineProvider theme={theme}>
+          <Checkbox
+            label={reminder.label}
+            checked={isChecked && enabled}
+            onChange={() => setIsChecked(!isChecked)}
+            disabled={!enabled}
+            color="green"
+            p={0}
+            m={0}
+          />
+        </MantineProvider>
         <Tooltip label={reminder.description}>
-          <Button color="green" variant="transparent" size="xs"><IconInfoCircle/></Button>
+          <Button color="green" variant="transparent" size="xs">
+            <IconInfoCircle />
+          </Button>
         </Tooltip>
       </Group>
       <Slider
         label={`${time} min`}
         min={1}
         max={60}
+        w={280}
         color="green"
         value={time}
         onChange={handleChange}

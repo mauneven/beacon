@@ -1,0 +1,17 @@
+{
+  "reminders": {
+    "title": "Recordatorios",
+    "drink_water": "Beber Agua",
+    "stretch_hands": "Estirar Manos",
+    "stretch_legs": "Estirar Piernas",
+    "relax_eyes": "Relajar Ojos",
+    "sit_properly": "Sentarse Correctamente",
+    "description": {
+      "drink_water": "Mantente hidratado, mantente alerta.",
+      "stretch_hands": "Dale un descanso a tus manos.",
+      "stretch_legs": "¡Estira esas piernas!",
+      "relax_eyes": "Descansa tus ojos un momento.",
+      "sit_properly": "Siéntate derecho, siéntete bien."
+    }
+  }
+}

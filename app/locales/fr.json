@@ -1,0 +1,17 @@
+{
+  "reminders": {
+    "title": "Rappels",
+    "drink_water": "Boire de l'Eau",
+    "stretch_hands": "Étirer les Mains",
+    "stretch_legs": "Étirer les Jambes",
+    "relax_eyes": "Reposer les Yeux",
+    "sit_properly": "Asseoir Correctement",
+    "description": {
+      "drink_water": "Restez hydraté, restez vif.",
+      "stretch_hands": "Donnez une pause à vos mains.",
+      "stretch_legs": "Étirez ces jambes !",
+      "relax_eyes": "Reposez vos yeux un instant.",
+      "sit_properly": "Asseyez-vous droit, sentez-vous bien."
+    }
+  }
+}

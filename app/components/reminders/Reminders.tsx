@@ -12,12 +12,12 @@ const Reminders = () => {
 
   return (
     <Paper shadow="xl" withBorder p="xl">
-      <Stack w={490}>
+      <Stack>
         <Group justify="center">
           <Title>Reminders</Title>
           <Switch size="md" checked={enabled} onChange={toggleEnabled} color="green"/>
         </Group>
-        <ReminderList enabled={enabled} />
+        <ReminderList enabled={true} lang="en" />
       </Stack>
     </Paper>
   );

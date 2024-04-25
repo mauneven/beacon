@@ -1,0 +1,17 @@
+{
+  "reminders": {
+    "title": "Reminders",
+    "drink_water": "Drink Water",
+    "stretch_hands": "Stretch Hands",
+    "stretch_legs": "Stretch Legs",
+    "relax_eyes": "Relax Eyes",
+    "sit_properly": "Sit Properly",
+    "description": {
+      "drink_water": "Stay hydrated, stay sharp.",
+      "stretch_hands": "Give your hands a break.",
+      "stretch_legs": "Stretch those legs out!",
+      "relax_eyes": "Rest your eyes for a moment.",
+      "sit_properly": "Sit up straight, feel great."
+    }
+  }
+}

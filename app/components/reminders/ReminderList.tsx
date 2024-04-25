@@ -1,23 +1,39 @@
 import React from "react";
 import ReminderItem from "./ReminderItem";
-
-const reminders = [
-  { id: 1, label: "Drink Water", description: "Stay hydrated, stay sharp." },
-  { id: 2, label: "Stretch Hands", description: "Give your hands a break." },
-  { id: 3, label: "Stretch Legs", description: "Stretch those legs out!" },
-  { id: 4, label: "Relax Eyes", description: "Rest your eyes for a moment." },
-  { id: 5, label: "Sit Properly", description: "Sit up straight, feel great." },
-];
+import useTranslation from "@/app/UseTranslation";
 
 interface ReminderListProps {
   enabled: boolean;
+  lang: string;
 }
 
-const ReminderList: React.FC<ReminderListProps> = ({ enabled }) => {
+const ReminderList: React.FC<ReminderListProps> = ({ enabled, lang }) => {
+  const dict = useTranslation(lang);
+
+  if (!dict) {
+    return <div>Loading translations...</div>;
+  }
+
+  const reminders = [
+    { id: 1, key: "drink_water", description: dict.reminders.description.drink_water },
+    { id: 2, key: "stretch_hands", description: dict.reminders.description.stretch_hands },
+    { id: 3, key: "stretch_legs", description: dict.reminders.description.stretch_legs },
+    { id: 4, key: "relax_eyes", description: dict.reminders.description.relax_eyes },
+    { id: 5, key: "sit_properly", description: dict.reminders.description.sit_properly },
+  ];
+
   return (
     <>
       {reminders.map((reminder) => (
-        <ReminderItem key={reminder.id} reminder={reminder} enabled={enabled} />
+        <ReminderItem
+          key={reminder.id}
+          reminder={{
+            id: reminder.id,
+            label: dict.reminders[reminder.key] as string,
+            description: reminder.description
+          }}
+          enabled={enabled}
+        />
       ))}
     </>
   );
