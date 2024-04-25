@@ -1,7 +1,6 @@
 import React from "react";
 import ReminderItem from "./ReminderItem";
-import useTranslation from "@/app/UseTranslation";
-
+import useTranslation from "../../useTranslation";
 interface ReminderListProps {
   enabled: boolean;
   lang: string;
