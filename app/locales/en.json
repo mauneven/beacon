@@ -1,18 +1,23 @@
 {
   "reminders": {
     "title": "Reminders",
-    "info": "Decide how often should beacon remember you to take care about: ",
-    "drink_water": "Drink Water",
-    "stretch_hands": "Stretch Hands",
-    "stretch_legs": "Stretch Legs",
-    "relax_eyes": "Relax Eyes",
-    "sit_properly": "Sit Properly",
+    "info": "Decide how often Beacon should remind you to consider:",
+    "settings": "Beacon Settings",
+    "language": "Language",
+    "about_beacon": "About Beacon",
+    "min_indicator": "min",
+    "hour_indicator": "hour",
+    "drink_water": "Drink water",
+    "stretch_hands": "Stretch hands",
+    "stretch_legs": "Stretch legs",
+    "relax_eyes": "Relax eyes",
+    "sit_properly": "Sit properly",
     "description": {
-      "drink_water": "Stay hydrated, stay sharp.",
+      "drink_water": "Stay hydrated, stay alert.",
       "stretch_hands": "Give your hands a break.",
-      "stretch_legs": "Stretch those legs out!",
+      "stretch_legs": "Stretch those legs!",
       "relax_eyes": "Rest your eyes for a moment.",
-      "sit_properly": "Sit up straight, feel great."
+      "sit_properly": "Sit up straight, feel good."
     }
   }
 }

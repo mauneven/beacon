@@ -1,18 +1,23 @@
 {
   "reminders": {
     "title": "Rappels",
-    "info": "Décidez à quelle fréquence Beacon doit vous rappeler de prendre soin de vous : ",
+    "info": "Décidez à quelle fréquence Beacon devrait vous rappeler de tenir compte de :",
+    "settings": "Paramètres de Beacon",
+    "language": "Langue",
+    "about_beacon": "À propos de Beacon",
+    "min_indicator": "min",
+    "hour_indicator": "heure",
     "drink_water": "Boire de l'eau",
     "stretch_hands": "Étirer les mains",
     "stretch_legs": "Étirer les jambes",
-    "relax_eyes": "Reposez vos yeux",
+    "relax_eyes": "Relâcher les yeux",
     "sit_properly": "Asseyez-vous correctement",
     "description": {
-      "drink_water": "Restez hydraté, restez vif.",
-      "stretch_hands": "Accordez une pause à vos mains.",
+      "drink_water": "Restez hydraté, restez vigilant.",
+      "stretch_hands": "Donnez une pause à vos mains.",
       "stretch_legs": "Étirez ces jambes !",
-      "relax_eyes": "Reposez vos yeux un moment.",
-      "sit_properly": "Asseyez-vous bien droit, sentez-vous bien."
+      "relax_eyes": "Reposez vos yeux un instant.",
+      "sit_properly": "Asseyez-vous droit, sentez-vous bien."
     }
   }
 }

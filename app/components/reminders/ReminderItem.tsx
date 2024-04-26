@@ -15,14 +15,18 @@ interface ReminderItemProps {
   enabled: boolean;
 }
 
+const isBrowser = typeof window !== "undefined";
+
 const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
-  const persistedState = JSON.parse(localStorage.getItem(`reminder_${reminder.id}`) ?? '{}');
+  const persistedState = isBrowser ? JSON.parse(localStorage.getItem(`reminder_${reminder.id}`) ?? '{}') : {};
   const [isChecked, setIsChecked] = useState(persistedState.isChecked || reminder.check);
   const [time, setTime] = useState(persistedState.time ?? reminder.time ?? 30);
   const notificationInterval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    localStorage.setItem(`reminder_${reminder.id}`, JSON.stringify({ isChecked, time }));
+    if (isBrowser) {
+      localStorage.setItem(`reminder_${reminder.id}`, JSON.stringify({ isChecked, time }));
+    }
   }, [isChecked, time]);
 
   useEffect(() => {
@@ -31,8 +35,8 @@ const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
         new Notification(`${reminder.description}!`);
       }, time * 60000);
     } else if (notificationInterval.current) {
-        clearInterval(notificationInterval.current);
-        notificationInterval.current = null;
+      clearInterval(notificationInterval.current);
+      notificationInterval.current = null;
     }
 
     return () => {

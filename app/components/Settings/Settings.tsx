@@ -1,6 +1,7 @@
 import { Modal, Select } from "@mantine/core";
 import React, { useContext } from "react";
 import { LanguageContext } from "../../locales/LanguageContext";
+import useTranslation from "@/app/useTranslation";
 
 interface SettingsProps {
   opened: boolean;
@@ -9,6 +10,7 @@ interface SettingsProps {
 
 function Settings({ opened, onClose }: Readonly<SettingsProps>) {
   const { language, setLanguage } = useContext(LanguageContext);
+  const dict = useTranslation(language);
 
   const changeLanguage = (lang: string | null) => {
     if (lang === null) return;
@@ -19,7 +21,7 @@ function Settings({ opened, onClose }: Readonly<SettingsProps>) {
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Settings"
+      title={dict?.reminders.settings}
       centered
       overlayProps={{
         backgroundOpacity: 0.55,
@@ -27,8 +29,7 @@ function Settings({ opened, onClose }: Readonly<SettingsProps>) {
       }}
     >
       <Select
-        label="Language"
-        placeholder="Select a language"
+        label={dict?.reminders.language}
         value={language}
         onChange={changeLanguage}
         data={[

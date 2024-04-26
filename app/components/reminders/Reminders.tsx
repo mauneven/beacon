@@ -8,14 +8,18 @@ import useTranslation from "../../useTranslation";
 import { LanguageContext } from '../../locales/LanguageContext';
 
 const Reminders = () => {
+
+  const [lang, setLang] = useState('en');
   const [enabled, setEnabled] = useState(JSON.parse(localStorage.getItem('remindersEnabled') ?? 'true'));
   const [settingsOpened, setSettingsOpened] = useState(false);
   const { language } = useContext(LanguageContext);
   const dict = useTranslation(language);
-
+  
   useEffect(() => {
-    localStorage.setItem('remindersEnabled', JSON.stringify(enabled));
-  }, [enabled]);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('remindersEnabled', JSON.stringify(enabled));
+    }
+  }, [enabled]);  
 
   const toggleEnabled = () => {
     setEnabled(!enabled);

@@ -1,8 +1,6 @@
-"use client"
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, Container, MantineProvider } from "@mantine/core";
 import { HeaderMenu } from "./components/navigation/Navbar";
-import { useEffect, useState } from "react";
 import { LanguageProvider } from "./locales/LanguageContext";
 
 export default function RootLayout({
@@ -10,13 +8,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [lang, setLang] = useState('en');
-
-  useEffect(() => {
-    const storedLang = localStorage.getItem('language') ?? 'en';
-    setLang(storedLang);
-  }, []);
-
   return (
     <html lang="en">
       <head>

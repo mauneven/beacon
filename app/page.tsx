@@ -1,6 +1,9 @@
+// app/page.tsx
 import { Flex } from "@mantine/core";
 import React from "react";
 import Reminders from "./components/reminders/Reminders";
+
+const isBrowser = typeof window !== "undefined";
 
 const page = () => {
   return (
@@ -13,7 +16,7 @@ const page = () => {
       direction="row"
       wrap="wrap"
     >
-      <Reminders />
+      {isBrowser && <Reminders />}
     </Flex>
   );
 };
