@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import {
   Group,
   Burger,
@@ -16,12 +16,13 @@ import { useDisclosure } from "@mantine/hooks";
 import classes from "../../../public/css/navigation/HeaderMenu.module.css";
 import ThemeChanger from "../theme/ThemeChanger";
 import useTranslation from "@/app/useTranslation";
+import { LanguageContext } from "../../locales/LanguageContext";
 
 export function HeaderMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
-  const lang = localStorage.getItem("language") ?? "en";
-  const dict = useTranslation(lang);
+  const { language } = useContext(LanguageContext);
+  const dict = useTranslation(language);
 
   return (
     <header className={classes.header}>
@@ -42,7 +43,7 @@ export function HeaderMenu() {
 
         <Group>
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
-            <Button>{dict?.reminders.about_beacon}</Button> <ThemeChanger />
+            <Button size="sm" variant="light" color="orange">{dict?.reminders.about_beacon}</Button> <ThemeChanger />
           </Group>
         </Group>
 
@@ -57,7 +58,7 @@ export function HeaderMenu() {
         >
           <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
             <Divider m={0} />
-            <Button>{dict?.reminders.about_beacon}</Button>
+            <Button variant="light" color="orange">{dict?.reminders.about_beacon}</Button>
             <Divider
               m={0}
               label="Wanna change your theme?"

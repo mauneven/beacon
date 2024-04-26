@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import ReminderItem from "./ReminderItem";
 import useTranslation from "../../useTranslation";
 import { Loader } from "@mantine/core";
+import { LanguageContext } from "../../locales/LanguageContext";
 interface ReminderListProps {
   enabled: boolean;
-  lang: string;
 }
 
-const ReminderList: React.FC<ReminderListProps> = ({ enabled, lang }) => {
-  const dict = useTranslation(lang);
+const ReminderList: React.FC<ReminderListProps> = ({ enabled }) => {
+  const { language } = useContext(LanguageContext);
+  const dict = useTranslation(language);
 
   if (!dict) {
     return <Loader color="orange" type="bars" />;

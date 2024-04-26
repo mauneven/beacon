@@ -1,25 +1,18 @@
 import { Modal, Select } from "@mantine/core";
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
+import { LanguageContext } from "../../locales/LanguageContext";
 
 interface SettingsProps {
   opened: boolean;
   onClose: () => void;
-  setLang: (lang: string) => void;
-  currentLang: string;
 }
 
-function Settings({ opened, onClose, setLang, currentLang }: Readonly<SettingsProps>) {
-  const [selectedLang, setSelectedLang] = useState(currentLang);
-
-  useEffect(() => {
-    const defaultLang = navigator.language.startsWith("es") ? "es" : "en";
-    setSelectedLang(localStorage.getItem('language') ?? defaultLang);
-  }, []);
+function Settings({ opened, onClose }: Readonly<SettingsProps>) {
+  const { language, setLanguage } = useContext(LanguageContext);
 
   const changeLanguage = (lang: string | null) => {
     if (lang === null) return;
-    setSelectedLang(lang);
-    setLang(lang);
+    setLanguage(lang);
   };
 
   return (
@@ -36,7 +29,7 @@ function Settings({ opened, onClose, setLang, currentLang }: Readonly<SettingsPr
       <Select
         label="Language"
         placeholder="Select a language"
-        value={selectedLang}
+        value={language}
         onChange={changeLanguage}
         data={[
           { value: "en", label: "English" },
