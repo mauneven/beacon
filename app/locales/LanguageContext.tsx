@@ -11,13 +11,13 @@ export const LanguageContext = createContext<LanguageContextType>({
   setLanguage: () => {},
 });
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<string>("");
+export const LanguageProvider: React.FC<{ children: React.ReactNode, lang: string }> = ({ children, lang }) => {
+  const [language, setLanguage] = useState<string>(lang);
 
-  const handleLanguageChange = (lang: string) => {
-    setLanguage(lang);
+  const handleLanguageChange = (newLang: string) => {
+    setLanguage(newLang);
     if (typeof window !== "undefined") {
-      localStorage.setItem("language", lang);
+      localStorage.setItem("language", newLang);
     }
   };
 

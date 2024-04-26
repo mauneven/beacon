@@ -1,4 +1,5 @@
-// app/page.tsx
+"use client"
+
 import { Flex } from "@mantine/core";
 import React from "react";
 import Reminders from "./components/reminders/Reminders";
