@@ -15,9 +15,8 @@ interface ReminderItemProps {
   enabled: boolean;
 }
 
-const isBrowser = typeof window !== "undefined";
-
 const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
+  const isBrowser = typeof window !== "undefined";
   const persistedState = isBrowser ? JSON.parse(localStorage.getItem(`reminder_${reminder.id}`) ?? '{}') : {};
   const [isChecked, setIsChecked] = useState(persistedState.isChecked || reminder.check);
   const [time, setTime] = useState(persistedState.time ?? reminder.time ?? 30);
