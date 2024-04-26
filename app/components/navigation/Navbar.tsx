@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import {
   Group,
@@ -10,25 +10,20 @@ import {
   Stack,
   Container,
   Button,
+  Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "../../../public/css/navigation/HeaderMenu.module.css";
 import ThemeChanger from "../theme/ThemeChanger";
 
-const links = [
-  { link: "/", label: "Download the app" }
-];
+const links = [{ link: "/", label: "Download the app" }];
 
 export function HeaderMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
 
   const items = links.map((link) => (
-    <a
-      key={link.label}
-      href={link.link}
-      className={classes.link}
-    >
+    <a key={link.label} href={link.link} className={classes.link}>
       {link.label}
     </a>
   ));
@@ -43,11 +38,8 @@ export function HeaderMenu() {
             size="sm"
             hiddenFrom="sm"
           />
-          <Button
-            variant="transparent"
-            c={"green"}
-          >
-            Beacon
+          <Button variant="transparent" c={"orange"}>
+            <Text size="xl" fw={700}>Beacon</Text>
           </Button>
         </Group>
 

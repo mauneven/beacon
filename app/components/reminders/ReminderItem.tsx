@@ -1,28 +1,45 @@
-import React, { useState } from "react";
-import { Button, Checkbox, Group, MantineProvider, Slider, Tooltip, createTheme } from "@mantine/core";
-import { IconInfoCircle } from "@tabler/icons-react";
+import React, { useState, useEffect, useRef } from 'react';
+import { Button, Checkbox, Group, MantineProvider, Slider, Tooltip, createTheme } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
+
+interface Reminder {
+  id: number;
+  label: string;
+  description: string;
+}
 
 interface ReminderItemProps {
-  reminder: { id: number; label: string; description: string };
+  reminder: Reminder;
   enabled: boolean;
 }
 
-const ReminderItem: React.FC<ReminderItemProps> = ({ reminder, enabled }) => {
+const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
   const [isChecked, setIsChecked] = useState(false);
   const [time, setTime] = useState(30);
+  const notificationInterval = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (isChecked && enabled && Notification.permission === 'granted') {
+      notificationInterval.current = setInterval(() => {
+        new Notification(`${reminder.description}!`);
+      }, time * 60000);
+    } else if (notificationInterval.current) {
+        clearInterval(notificationInterval.current);
+        notificationInterval.current = null;
+      }
+
+    return () => {
+      if (notificationInterval.current) {
+        clearInterval(notificationInterval.current);
+      }
+    };
+  }, [isChecked, enabled, time]);
 
   const handleChange = (value: number) => {
     setTime(value);
-    if (isChecked && enabled && Notification.permission === "granted") {
-      setTimeout(() => {
-        new Notification(`Time to ${reminder.label}!`);
-      }, value * 60000);
-    }
   };
 
-  const theme = createTheme({
-    cursorType: "pointer",
-  });
+  const theme = createTheme({ cursorType: 'pointer' });
 
   return (
     <Group mih={60} justify="space-between">
@@ -33,13 +50,13 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ reminder, enabled }) => {
             checked={isChecked && enabled}
             onChange={() => setIsChecked(!isChecked)}
             disabled={!enabled}
-            color="green"
+            color="orange"
             p={0}
             m={0}
           />
         </MantineProvider>
         <Tooltip label={reminder.description}>
-          <Button color="green" variant="transparent" size="xs">
+          <Button color="orange" variant="transparent" size="xs">
             <IconInfoCircle />
           </Button>
         </Tooltip>
@@ -49,11 +66,11 @@ const ReminderItem: React.FC<ReminderItemProps> = ({ reminder, enabled }) => {
         min={1}
         max={60}
         w={280}
-        color="green"
+        color="orange"
         value={time}
         onChange={handleChange}
         disabled={!isChecked || !enabled}
-        size={"sm"}
+        size={'sm'}
         labelAlwaysOn
         marks={[
           { value: 0, label: "0 Min" },
