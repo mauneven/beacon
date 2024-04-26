@@ -5,9 +5,9 @@ import Reminders from "./components/reminders/Reminders";
 const page = () => {
   return (
     <Flex
-      mih={50}
+      mt={100}
+      mb={100}
       gap="xl"
-      mt={80}
       justify="center"
       align="center"
       direction="row"

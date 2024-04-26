@@ -10,6 +10,7 @@ interface TranslationDict {
         sit_properly: string;
       };
       title: string;
+      info: string;
       drink_water: string;
       stretch_hands: string;
       stretch_legs: string;

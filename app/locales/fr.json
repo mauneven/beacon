@@ -1,17 +1,18 @@
 {
   "reminders": {
     "title": "Rappels",
-    "drink_water": "Boire de l'Eau",
-    "stretch_hands": "Étirer les Mains",
-    "stretch_legs": "Étirer les Jambes",
-    "relax_eyes": "Reposer les Yeux",
-    "sit_properly": "Asseoir Correctement",
+    "info": "Décidez à quelle fréquence Beacon doit vous rappeler de prendre soin de vous : ",
+    "drink_water": "Boire de l'eau",
+    "stretch_hands": "Étirer les mains",
+    "stretch_legs": "Étirer les jambes",
+    "relax_eyes": "Reposez vos yeux",
+    "sit_properly": "Asseyez-vous correctement",
     "description": {
       "drink_water": "Restez hydraté, restez vif.",
-      "stretch_hands": "Donnez une pause à vos mains.",
+      "stretch_hands": "Accordez une pause à vos mains.",
       "stretch_legs": "Étirez ces jambes !",
-      "relax_eyes": "Reposez vos yeux un instant.",
-      "sit_properly": "Asseyez-vous droit, sentez-vous bien."
+      "relax_eyes": "Reposez vos yeux un moment.",
+      "sit_properly": "Asseyez-vous bien droit, sentez-vous bien."
     }
   }
 }

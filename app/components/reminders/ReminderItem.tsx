@@ -6,6 +6,8 @@ interface Reminder {
   id: number;
   label: string;
   description: string;
+  time: number;
+  check: boolean
 }
 
 interface ReminderItemProps {
@@ -14,9 +16,14 @@ interface ReminderItemProps {
 }
 
 const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
-  const [isChecked, setIsChecked] = useState(false);
-  const [time, setTime] = useState(30);
+  const persistedState = JSON.parse(localStorage.getItem(`reminder_${reminder.id}`) ?? '{}');
+  const [isChecked, setIsChecked] = useState(persistedState.isChecked || reminder.check);
+  const [time, setTime] = useState(persistedState.time ?? reminder.time ?? 30);
   const notificationInterval = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem(`reminder_${reminder.id}`, JSON.stringify({ isChecked, time }));
+  }, [isChecked, time]);
 
   useEffect(() => {
     if (isChecked && enabled && Notification.permission === 'granted') {
@@ -26,7 +33,7 @@ const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
     } else if (notificationInterval.current) {
         clearInterval(notificationInterval.current);
         notificationInterval.current = null;
-      }
+    }
 
     return () => {
       if (notificationInterval.current) {
@@ -42,7 +49,7 @@ const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
   const theme = createTheme({ cursorType: 'pointer' });
 
   return (
-    <Group mih={60} justify="space-between">
+    <Group mih={90} justify="space-between">
       <Group justify="flex-start" gap={0}>
         <MantineProvider theme={theme}>
           <Checkbox
@@ -65,7 +72,7 @@ const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
         label={`${time} min`}
         min={1}
         max={60}
-        w={280}
+        w={380}
         color="orange"
         value={time}
         onChange={handleChange}

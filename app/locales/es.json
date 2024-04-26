@@ -1,16 +1,17 @@
 {
   "reminders": {
     "title": "Recordatorios",
-    "drink_water": "Beber Agua",
-    "stretch_hands": "Estirar Manos",
-    "stretch_legs": "Estirar Piernas",
-    "relax_eyes": "Relajar Ojos",
-    "sit_properly": "Sentarse Correctamente",
+    "info": "Decide con qué frecuencia Beacon debería recordarte que tomes en cuenta: ",
+    "drink_water": "Beber agua",
+    "stretch_hands": "Estirar las manos",
+    "stretch_legs": "Estirar las piernas",
+    "relax_eyes": "Relajar los ojos",
+    "sit_properly": "Sentarse correctamente",
     "description": {
       "drink_water": "Mantente hidratado, mantente alerta.",
       "stretch_hands": "Dale un descanso a tus manos.",
       "stretch_legs": "¡Estira esas piernas!",
-      "relax_eyes": "Descansa tus ojos un momento.",
+      "relax_eyes": "Descansa tus ojos por un momento.",
       "sit_properly": "Siéntate derecho, siéntete bien."
     }
   }

@@ -16,7 +16,7 @@ import { useDisclosure } from "@mantine/hooks";
 import classes from "../../../public/css/navigation/HeaderMenu.module.css";
 import ThemeChanger from "../theme/ThemeChanger";
 
-const links = [{ link: "/", label: "Download the app" }];
+const links = [{ link: "/", label: "About Beacon" }];
 
 export function HeaderMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
