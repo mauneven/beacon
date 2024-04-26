@@ -60,13 +60,13 @@ const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
             checked={isChecked && enabled}
             onChange={() => setIsChecked(!isChecked)}
             disabled={!enabled}
-            color="orange"
+            color="cyan"
             p={0}
             m={0}
           />
         </MantineProvider>
         <Tooltip label={reminder.description}>
-          <Button color="orange" variant="transparent" size="xs">
+          <Button color="cyan" variant="transparent" size="xs">
             <IconInfoCircle />
           </Button>
         </Tooltip>
@@ -76,7 +76,7 @@ const ReminderItem = ({ reminder, enabled }: ReminderItemProps) => {
         min={1}
         max={60}
         w={380}
-        color="orange"
+        color="cyan"
         value={time}
         onChange={handleChange}
         disabled={!isChecked || !enabled}

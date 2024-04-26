@@ -1,7 +1,7 @@
 {
   "reminders": {
     "title": "Rappels",
-    "info": "Décidez à quelle fréquence Beacon devrait vous rappeler de tenir compte de :",
+    "info": "Décidez à quelle fréquence Beacon doit vous rappeler de tenir compte de :",
     "settings": "Paramètres de Beacon",
     "language": "Langue",
     "about_beacon": "À propos de Beacon",
@@ -10,14 +10,26 @@
     "drink_water": "Boire de l'eau",
     "stretch_hands": "Étirer les mains",
     "stretch_legs": "Étirer les jambes",
-    "relax_eyes": "Relâcher les yeux",
+    "relax_eyes": "Reposez vos yeux",
     "sit_properly": "Asseyez-vous correctement",
     "description": {
       "drink_water": "Restez hydraté, restez vigilant.",
       "stretch_hands": "Donnez une pause à vos mains.",
       "stretch_legs": "Étirez ces jambes !",
-      "relax_eyes": "Reposez vos yeux un instant.",
+      "relax_eyes": "Reposez vos yeux un moment.",
       "sit_properly": "Asseyez-vous droit, sentez-vous bien."
+    },
+    "about_page": {
+      "main_title": "Beacon vous rappelle de bonnes choses pour vous garder en bonne santé.",
+      "about_beacon": "À propos de Beacon et de son développement",
+      "about_beacon_desc_part1": "Il s'agit d'un projet open source et son référentiel est disponible sur ",
+      "about_beacon_desc_part2": " pour inspection, utilisation et modification. Ce projet est basé sur bon nombre des fonctionnalités existantes d'un autre projet open source appelé ",
+      "about_beacon_desc_part3": ".",
+      "privacy": "Confidentialité",
+      "privacy_desc": "Beacon ne collecte ni n'utilise de cookies, ni ne trace les utilisateurs de quelque manière que ce soit, et ne partage pas d'informations avec des tiers concernant leurs rappels. Ces informations sont stockées exclusivement dans le navigateur de chaque utilisateur.",
+      "license": "Licence et garantie",
+      "license_desc": "Beacon est distribué sous licence MIT et n'offre aucune garantie.",
+      "maintainers": "Mainteneurs"
     }
   }
 }

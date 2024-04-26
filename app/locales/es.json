@@ -18,6 +18,18 @@
       "stretch_legs": "¡Estira esas piernas!",
       "relax_eyes": "Descansa tus ojos por un momento.",
       "sit_properly": "Siéntate derecho, siéntete bien."
+    },
+    "about_page": {
+      "main_title": "Beacon te recuerda cosas buenas para mantenerte saludable.",
+      "about_beacon": "Acerca de Beacon y su desarrollo",
+      "about_beacon_desc_part1": "Es un proyecto de código abierto y su repositorio se encuentra disponible en ",
+      "about_beacon_desc_part2": " para su inspección, uso y modificación. Este proyecto se basa en muchas de las funciones existentes de otro proyecto de código abierto llamado ",
+      "about_beacon_desc_part3": ".",
+      "privacy": "Privacidad",
+      "privacy_desc": "Beacon no recopila ni utiliza cookies ni realiza ningún tipo de seguimiento de los usuarios, ni comparte información con terceros sobre sus recordatorios. Estos están guardados exclusivamente en el navegador de cada usuario.",
+      "license": "Licencia y garantía",
+      "license_desc": "Beacon se distribuye bajo la licencia MIT y no ofrece garantía.",
+      "maintainers": "Mantenedores"
     }
   }
 }

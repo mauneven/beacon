@@ -12,7 +12,7 @@ const ReminderList: React.FC<ReminderListProps> = ({ enabled }) => {
   const dict = useTranslation(language);
 
   if (!dict) {
-    return <Loader color="orange" type="bars" />;
+    return <Loader color="cyan" type="bars" />;
   }
 
   const reminders = [

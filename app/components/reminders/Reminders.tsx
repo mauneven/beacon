@@ -28,8 +28,8 @@ const Reminders = () => {
           <Text>{dict?.reminders.info}</Text>
           </Stack>
           <Group>            
-          <Switch size="md" checked={enabled} onChange={toggleEnabled} color="orange"/>
-          <Button color="orange" variant='' p={4} onClick={() => setSettingsOpened(true)}><IconSettings/></Button>
+          <Switch size="md" checked={enabled} onChange={toggleEnabled} color="cyan"/>
+          <Button color="cyan" variant='' p={4} onClick={() => setSettingsOpened(true)}><IconSettings/></Button>
           </Group>
         </Group>
         <ReminderList enabled={enabled && !settingsOpened} />

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import "@mantine/core/styles.css";
 
 import { ColorSchemeScript, Container, MantineProvider } from "@mantine/core";
@@ -11,18 +11,32 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState(() => {
+    if (typeof window !== "undefined") {
+      const storedLang = localStorage.getItem("language");
+      const userLanguage = navigator.language.split("-")[0];
+      const defaultLanguage = "en";
+      const availableLanguages = ["en", "es", "fr"];
+
+      if (storedLang && availableLanguages.includes(storedLang)) {
+        return storedLang;
+      }
+
+      if (availableLanguages.includes(userLanguage)) {
+        return userLanguage;
+      }
+
+      return defaultLanguage;
+    }
+
+    return "en";
+  });
 
   useEffect(() => {
-    const userLanguage = navigator.language.split("-")[0];
-    const defaultLanguage = "en";
-    const availableLanguages = ["en", "es", "fr"];
-    const selectedLanguage = availableLanguages.includes(userLanguage)
-      ? userLanguage
-      : defaultLanguage;
-
-    setLang(selectedLanguage);
-  }, []);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("language", lang);
+    }
+  }, [lang]);
 
   return (
     <html lang={lang}>

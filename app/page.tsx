@@ -1,25 +1,20 @@
 "use client"
-
-import { Flex } from "@mantine/core";
-import React from "react";
+import { Flex, Loader } from "@mantine/core";
+import React, { useEffect, useState } from "react";
 import Reminders from "./components/reminders/Reminders";
 
-const isBrowser = typeof window !== "undefined";
+const Page = () => {
+    const [showReminders, setShowReminders] = useState(false);
 
-const page = () => {
-  return (
-    <Flex
-      mt={100}
-      mb={100}
-      gap="xl"
-      justify="center"
-      align="center"
-      direction="row"
-      wrap="wrap"
-    >
-      {isBrowser && <Reminders />}
-    </Flex>
-  );
+    useEffect(() => {
+        setShowReminders(true);
+    }, []);
+
+    return (
+        <Flex mt={100} mb={100} gap="xl" justify="center" align="center" direction="row" wrap="wrap" >
+            {showReminders ? <Reminders /> : <Loader color="cyan" type="bars" />}
+        </Flex>
+    );
 };
 
-export default page;
+export default Page;

@@ -1,16 +1,16 @@
 {
   "reminders": {
     "title": "Reminders",
-    "info": "Decide how often Beacon should remind you to consider:",
+    "info": "Decide how often Beacon should remind you to take into account:",
     "settings": "Beacon Settings",
     "language": "Language",
     "about_beacon": "About Beacon",
     "min_indicator": "min",
     "hour_indicator": "hour",
     "drink_water": "Drink water",
-    "stretch_hands": "Stretch hands",
-    "stretch_legs": "Stretch legs",
-    "relax_eyes": "Relax eyes",
+    "stretch_hands": "Stretch your hands",
+    "stretch_legs": "Stretch your legs",
+    "relax_eyes": "Relax your eyes",
     "sit_properly": "Sit properly",
     "description": {
       "drink_water": "Stay hydrated, stay alert.",
@@ -18,6 +18,18 @@
       "stretch_legs": "Stretch those legs!",
       "relax_eyes": "Rest your eyes for a moment.",
       "sit_properly": "Sit up straight, feel good."
+    },
+    "about_page": {
+      "main_title": "Beacon reminds you of good things to keep you healthy.",
+      "about_beacon": "About Beacon and its development",
+      "about_beacon_desc_part1": "It is an open-source project and its repository is available at ",
+      "about_beacon_desc_part2": " for inspection, use, and modification. This project is based on many of the existing features of another open-source project called ",
+      "about_beacon_desc_part3": ".",
+      "privacy": "Privacy",
+      "privacy_desc": "Beacon does not collect or use cookies or track users in any way, nor does it share information with third parties about their reminders. These are stored exclusively in each user's browser.",
+      "license": "License and Warranty",
+      "license_desc": "Beacon is distributed under the MIT license and offers no warranty.",
+      "maintainers": "Maintainers"
     }
   }
 }
