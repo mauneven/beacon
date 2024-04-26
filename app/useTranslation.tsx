@@ -11,6 +11,11 @@ interface TranslationDict {
       };
       title: string;
       info: string;
+      settings: string;
+      language: string;
+      about_beacon: string;
+      min_indicator: string;
+      hour_indicator: string;
       drink_water: string;
       stretch_hands: string;
       stretch_legs: string;

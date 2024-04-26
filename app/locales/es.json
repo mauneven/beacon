@@ -2,6 +2,11 @@
   "reminders": {
     "title": "Recordatorios",
     "info": "Decide con qué frecuencia Beacon debería recordarte que tomes en cuenta: ",
+    "settings": "Configuración de Beacon",
+    "language": "Idioma",
+    "about_beacon": "Acerca de Beacon",
+    "min_indicator": "min",
+    "hour_indicator": "hour",
     "drink_water": "Beber agua",
     "stretch_hands": "Estirar las manos",
     "stretch_legs": "Estirar las piernas",

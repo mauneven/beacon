@@ -15,18 +15,13 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import classes from "../../../public/css/navigation/HeaderMenu.module.css";
 import ThemeChanger from "../theme/ThemeChanger";
-
-const links = [{ link: "/", label: "About Beacon" }];
+import useTranslation from "@/app/useTranslation";
 
 export function HeaderMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
-
-  const items = links.map((link) => (
-    <a key={link.label} href={link.link} className={classes.link}>
-      {link.label}
-    </a>
-  ));
+  const lang = localStorage.getItem("language") ?? "en";
+  const dict = useTranslation(lang);
 
   return (
     <header className={classes.header}>
@@ -39,14 +34,15 @@ export function HeaderMenu() {
             hiddenFrom="sm"
           />
           <Button variant="transparent" c={"orange"}>
-            <Text size="xl" fw={700}>Beacon</Text>
+            <Text size="xl" fw={700}>
+              Beacon
+            </Text>
           </Button>
         </Group>
 
         <Group>
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
-            {items}
-            <ThemeChanger />
+            <Button>{dict?.reminders.about_beacon}</Button> <ThemeChanger />
           </Group>
         </Group>
 
@@ -61,7 +57,7 @@ export function HeaderMenu() {
         >
           <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
             <Divider m={0} />
-            {items}
+            <Button>{dict?.reminders.about_beacon}</Button>
             <Divider
               m={0}
               label="Wanna change your theme?"

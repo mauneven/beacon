@@ -8,17 +8,12 @@ interface SettingsProps {
   currentLang: string;
 }
 
-const Settings: React.FC<SettingsProps> = ({
-  opened,
-  onClose,
-  setLang,
-  currentLang,
-}) => {
+function Settings({ opened, onClose, setLang, currentLang }: Readonly<SettingsProps>) {
   const [selectedLang, setSelectedLang] = useState(currentLang);
 
   useEffect(() => {
     const defaultLang = navigator.language.startsWith("es") ? "es" : "en";
-    setSelectedLang(defaultLang);
+    setSelectedLang(localStorage.getItem('language') ?? defaultLang);
   }, []);
 
   const changeLanguage = (lang: string | null) => {
@@ -51,6 +46,6 @@ const Settings: React.FC<SettingsProps> = ({
       />
     </Modal>
   );
-};
+}
 
 export default Settings;

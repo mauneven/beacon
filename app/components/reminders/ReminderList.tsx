@@ -1,6 +1,7 @@
 import React from "react";
 import ReminderItem from "./ReminderItem";
 import useTranslation from "../../useTranslation";
+import { Loader } from "@mantine/core";
 interface ReminderListProps {
   enabled: boolean;
   lang: string;
@@ -10,7 +11,7 @@ const ReminderList: React.FC<ReminderListProps> = ({ enabled, lang }) => {
   const dict = useTranslation(lang);
 
   if (!dict) {
-    return <div>Loading translations...</div>;
+    return <Loader color="orange" type="bars" />;
   }
 
   const reminders = [
