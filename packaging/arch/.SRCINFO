@@ -1,0 +1,21 @@
+pkgbase = beacon-reminders
+	pkgdesc = Gentle reminders for GNOME
+	pkgver = 0.1.0
+	pkgrel = 1
+	url = https://github.com/mauneven/beacon
+	arch = x86_64
+	arch = aarch64
+	license = GPL-3.0-or-later
+	makedepends = cargo
+	depends = gtk4
+	depends = libadwaita
+	depends = glib2
+	depends = cairo
+	depends = gcc-libs
+	depends = glibc
+	depends = hicolor-icon-theme
+	options = !lto
+	source = beacon-0.1.0.tar.gz::https://github.com/mauneven/beacon/archive/refs/tags/v0.1.0.tar.gz
+	sha256sums = f426ceb3c77e3011fa9eec44281f84632a9a159c3e7239a301d342953cd48b30
+
+pkgname = beacon-reminders
