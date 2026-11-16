@@ -4,7 +4,6 @@
 mod client;
 mod dialogs;
 mod editor;
-mod ring;
 mod window;
 
 use std::cell::RefCell;

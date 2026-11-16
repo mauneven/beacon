@@ -1,25 +1,29 @@
-//! The main window: a list of reminders with live countdowns.
+//! The main window: one switch for everything, then one line per reminder
+//! with a check box, its name and a slider for the interval.
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::time::{Duration, SystemTime};
 
 use adw::prelude::*;
-use beacon::config::{Config, Loaded, Reminder};
+use beacon::config::{Config, Loaded, MAX_MINUTES, MIN_MINUTES, Reminder};
 use beacon::i18n::{tr, trf};
 use beacon::scheduler::clock;
 use beacon::{APP_ID, autostart};
 use gtk::{gio, glib};
 
 use crate::client::{Client, Deadlines};
-use crate::ring::Ring;
 use crate::{dialogs, editor};
+
+/// Wait this long after the last slider movement before saving.
+const SAVE_DELAY: Duration = Duration::from_millis(400);
 
 struct Row {
     id: u32,
-    row: adw::ActionRow,
-    switch: gtk::Switch,
-    ring: Ring,
+    check: gtk::CheckButton,
+    name: gtk::Button,
+    scale: gtk::Scale,
+    value: gtk::Label,
 }
 
 pub struct Ui {
@@ -27,25 +31,41 @@ pub struct Ui {
     pub window: adw::ApplicationWindow,
     toasts: adw::ToastOverlay,
     title: adw::WindowTitle,
-    banner: adw::Banner,
-    pause: gtk::ToggleButton,
-    stack: gtk::Stack,
-    list: gtk::ListBox,
+    master: gtk::Switch,
+    dnd: adw::Banner,
+    heading: gtk::Label,
+    grid: gtk::Grid,
+    empty: adw::StatusPage,
     rows: RefCell<Vec<Row>>,
     pub cfg: RefCell<Config>,
     deadlines: RefCell<Deadlines>,
     client: RefCell<Option<Client>>,
+    save_timer: RefCell<Option<glib::SourceId>>,
     /// Set while widgets are updated from the model, so their handlers
     /// don't write the change back.
     syncing: Cell<bool>,
+}
+
+fn minutes_label(minutes: u32) -> String {
+    if minutes >= 60 && minutes.is_multiple_of(60) {
+        trf("hours_short", &[("n", &(minutes / 60).to_string())])
+    } else {
+        trf("minutes_short", &[("n", &minutes.to_string())])
+    }
+}
+
+/// GNOME's Do Not Disturb setting, when the schema is there.
+fn notification_settings() -> Option<gio::Settings> {
+    let schema = "org.gnome.desktop.notifications";
+    gio::SettingsSchemaSource::default()?.lookup(schema, true)?;
+    Some(gio::Settings::new(schema))
 }
 
 impl Ui {
     pub fn build(app: &adw::Application) -> Rc<Ui> {
         let cfg = match Config::load() {
             Loaded::FirstRun(cfg) => {
-                // Start with the session by default, like the user expects
-                // from a reminder app; Preferences turns it off.
+                // Start with the session by default; Preferences turns it off.
                 if let Err(err) = autostart::set(true) {
                     eprintln!("beacon: could not enable autostart: {err}");
                 }
@@ -60,12 +80,6 @@ impl Ui {
             .tooltip_text(tr("add_reminder"))
             .action_name("win.add")
             .build();
-        let pause = gtk::ToggleButton::builder()
-            .icon_name("media-playback-pause-symbolic")
-            .tooltip_text(tr("pause"))
-            .active(cfg.paused)
-            .build();
-
         let menu = gio::Menu::new();
         let main = gio::Menu::new();
         main.append(Some(&tr("preferences")), Some("app.preferences"));
@@ -81,56 +95,83 @@ impl Ui {
             .primary(true)
             .tooltip_text(tr("main_menu"))
             .build();
-
         let title = adw::WindowTitle::new("Beacon", "");
         let header = adw::HeaderBar::new();
         header.pack_start(&add);
         header.pack_end(&menu_button);
-        header.pack_end(&pause);
         header.set_title_widget(Some(&title));
 
-        let banner = adw::Banner::builder()
-            .title(tr("paused_banner"))
-            .button_label(tr("resume"))
-            .revealed(cfg.paused)
+        let dnd = adw::Banner::builder()
+            .title(tr("dnd_banner"))
+            .button_label(tr("dnd_turn_off"))
             .build();
 
-        // Reminder list
-        let list = gtk::ListBox::builder()
-            .selection_mode(gtk::SelectionMode::None)
-            .css_classes(["boxed-list"])
-            .valign(gtk::Align::Start)
+        // The master switch
+        let master_title = gtk::Label::builder()
+            .label(tr("reminders_title"))
+            .xalign(0.0)
+            .css_classes(["title-3"])
             .build();
-        let note = gtk::Label::builder()
-            .label(tr("background_note"))
+        let master_subtitle = gtk::Label::builder()
+            .label(tr("reminders_subtitle"))
+            .xalign(0.0)
             .wrap(true)
-            .justify(gtk::Justification::Center)
-            .css_classes(["dim-label", "caption"])
+            .css_classes(["dim-label"])
             .build();
-        let column = gtk::Box::builder()
+        let master_text = gtk::Box::builder()
             .orientation(gtk::Orientation::Vertical)
-            .spacing(18)
-            .margin_top(24)
-            .margin_bottom(24)
+            .spacing(2)
+            .hexpand(true)
+            .build();
+        master_text.append(&master_title);
+        master_text.append(&master_subtitle);
+        let master = gtk::Switch::builder()
+            .active(!cfg.paused)
+            .valign(gtk::Align::Center)
+            .build();
+        master.update_property(&[gtk::accessible::Property::Label(&tr("reminders_title"))]);
+        let master_line = gtk::Box::builder().spacing(18).build();
+        master_line.append(&master_text);
+        master_line.append(&master);
+
+        let heading = gtk::Label::builder()
+            .label(tr("how_often"))
+            .xalign(0.0)
+            .wrap(true)
+            .margin_top(12)
+            .css_classes(["heading"])
+            .build();
+
+        // The scale's end points, above the sliders.
+        let marks = gtk::Box::builder()
+            .homogeneous(true)
             .margin_start(12)
-            .margin_end(12)
             .build();
-        column.append(&list);
-        column.append(&note);
-        let clamp = adw::Clamp::builder()
-            .maximum_size(560)
-            .child(&column)
+        for (minutes, xalign) in [
+            (MIN_MINUTES, 0.0),
+            (MAX_MINUTES / 2, 0.5),
+            (MAX_MINUTES, 1.0),
+        ] {
+            marks.append(
+                &gtk::Label::builder()
+                    .label(minutes_label(minutes))
+                    .xalign(xalign)
+                    .css_classes(["dim-label", "numeric"])
+                    .build(),
+            );
+        }
+        let grid = gtk::Grid::builder()
+            .column_spacing(6)
+            .row_spacing(10)
             .build();
-        let scroller = gtk::ScrolledWindow::builder()
-            .hscrollbar_policy(gtk::PolicyType::Never)
-            .vexpand(true)
-            .child(&clamp)
-            .build();
+        grid.attach(&marks, 2, 0, 1, 1);
 
         let empty = adw::StatusPage::builder()
             .icon_name(format!("{APP_ID}-symbolic"))
             .title(tr("empty_title"))
             .description(tr("empty_description"))
+            .css_classes(["compact"])
+            .vexpand(true)
             .child(
                 &gtk::Button::builder()
                     .label(tr("add_reminder"))
@@ -141,24 +182,49 @@ impl Ui {
             )
             .build();
 
-        let stack = gtk::Stack::builder()
-            .transition_type(gtk::StackTransitionType::Crossfade)
+        let note = gtk::Label::builder()
+            .label(tr("background_note"))
+            .xalign(0.0)
+            .wrap(true)
+            .margin_top(12)
+            .css_classes(["dim-label"])
             .build();
-        stack.add_named(&scroller, Some("list"));
-        stack.add_named(&empty, Some("empty"));
+
+        let column = gtk::Box::builder()
+            .orientation(gtk::Orientation::Vertical)
+            .spacing(18)
+            .margin_top(24)
+            .margin_bottom(24)
+            .margin_start(24)
+            .margin_end(24)
+            .build();
+        column.append(&master_line);
+        column.append(&heading);
+        column.append(&grid);
+        column.append(&empty);
+        column.append(&note);
+        let clamp = adw::Clamp::builder()
+            .maximum_size(640)
+            .child(&column)
+            .build();
+        let scroller = gtk::ScrolledWindow::builder()
+            .hscrollbar_policy(gtk::PolicyType::Never)
+            .vexpand(true)
+            .child(&clamp)
+            .build();
 
         let view = adw::ToolbarView::new();
         view.add_top_bar(&header);
-        view.add_top_bar(&banner);
-        view.set_content(Some(&stack));
+        view.add_top_bar(&dnd);
+        view.set_content(Some(&scroller));
         let toasts = adw::ToastOverlay::new();
         toasts.set_child(Some(&view));
 
         let window = adw::ApplicationWindow::builder()
             .application(app)
             .title("Beacon")
-            .default_width(460)
-            .default_height(640)
+            .default_width(600)
+            .default_height(580)
             .width_request(360)
             .height_request(294)
             .content(&toasts)
@@ -169,18 +235,21 @@ impl Ui {
             window,
             toasts,
             title,
-            banner,
-            pause,
-            stack,
-            list,
+            master,
+            dnd,
+            heading,
+            grid,
+            empty,
             rows: RefCell::new(Vec::new()),
             cfg: RefCell::new(cfg),
             deadlines: RefCell::new(Deadlines::new()),
             client: RefCell::new(None),
+            save_timer: RefCell::new(None),
             syncing: Cell::new(false),
         });
 
         ui.connect_signals();
+        ui.watch_do_not_disturb();
         ui.add_actions();
         ui.rebuild();
         ui.connect_service();
@@ -190,17 +259,39 @@ impl Ui {
 
     fn connect_signals(self: &Rc<Self>) {
         let weak = Rc::downgrade(self);
-        self.pause.connect_toggled(move |button| {
+        self.master.connect_active_notify(move |switch| {
             let Some(ui) = weak.upgrade() else { return };
             if ui.syncing.get() {
                 return;
             }
-            ui.cfg.borrow_mut().paused = button.is_active();
+            ui.cfg.borrow_mut().paused = !switch.is_active();
             ui.commit();
         });
-        let pause = self.pause.clone();
-        self.banner
-            .connect_button_clicked(move |_| pause.set_active(false));
+        // Never lose a slider change that is still waiting to be saved.
+        let weak = Rc::downgrade(self);
+        self.window.connect_close_request(move |_| {
+            if let Some(ui) = weak.upgrade() {
+                ui.flush();
+            }
+            glib::Propagation::Proceed
+        });
+    }
+
+    /// Shows a banner while Do Not Disturb hides the reminders.
+    fn watch_do_not_disturb(self: &Rc<Self>) {
+        let Some(settings) = notification_settings() else {
+            return;
+        };
+        let banner = self.dnd.clone();
+        let update = move |s: &gio::Settings| banner.set_revealed(!s.boolean("show-banners"));
+        update(&settings);
+        settings.connect_changed(Some("show-banners"), move |s, _| update(s));
+        let s = settings.clone();
+        self.dnd.connect_button_clicked(move |_| {
+            let _ = s.set_boolean("show-banners", true);
+        });
+        // Keep the settings object (and its signal) alive with the window.
+        unsafe { self.window.set_data("notification-settings", settings) };
     }
 
     fn add_actions(self: &Rc<Self>) {
@@ -214,8 +305,8 @@ impl Ui {
         self.window.add_action(&add);
 
         let toggle = gio::SimpleAction::new("toggle-pause", None);
-        let pause = self.pause.clone();
-        toggle.connect_activate(move |_, _| pause.set_active(!pause.is_active()));
+        let master = self.master.clone();
+        toggle.connect_activate(move |_, _| master.set_active(!master.is_active()));
         self.window.add_action(&toggle);
 
         let app_action = |name: &str, f: fn(&Rc<Ui>)| {
@@ -233,6 +324,7 @@ impl Ui {
         app_action("about", dialogs::about);
         app_action("quit", |ui| {
             // Quit stops the reminders too (closing the window doesn't).
+            ui.flush();
             let app = ui.app.clone();
             match ui.client.borrow().clone() {
                 Some(client) => client.quit(move || app.quit()),
@@ -302,7 +394,7 @@ impl Ui {
         self.refresh();
     }
 
-    /// Updates the countdowns once a second, skipped while GNOME reports
+    /// Updates the countdown once a second, skipped while GNOME reports
     /// the window as not visible.
     fn start_ticking(self: &Rc<Self>) {
         let weak = Rc::downgrade(self);
@@ -319,6 +411,9 @@ impl Ui {
 
     /// Saves the config and tells the service to pick it up.
     pub fn commit(&self) {
+        if let Some(timer) = self.save_timer.take() {
+            timer.remove();
+        }
         if let Err(err) = self.cfg.borrow().save() {
             eprintln!("beacon: could not save the config: {err}");
             self.toast(&err.to_string());
@@ -329,74 +424,154 @@ impl Ui {
         self.refresh();
     }
 
+    /// Commits once the slider has been still for a moment.
+    fn commit_soon(self: &Rc<Self>) {
+        if let Some(timer) = self.save_timer.take() {
+            timer.remove();
+        }
+        let weak = Rc::downgrade(self);
+        let timer = glib::timeout_add_local_once(SAVE_DELAY, move || {
+            if let Some(ui) = weak.upgrade() {
+                // The source is finishing on its own: forget it, don't remove it.
+                ui.save_timer.replace(None);
+                ui.commit();
+            }
+        });
+        self.save_timer.replace(Some(timer));
+    }
+
+    /// Saves now if a change is still waiting.
+    fn flush(&self) {
+        if self.save_timer.borrow().is_some() {
+            self.commit();
+        }
+    }
+
     pub fn toast(&self, text: &str) {
         self.toasts
             .add_toast(adw::Toast::builder().title(text).use_markup(false).build());
     }
 
-    /// Recreates the rows after reminders were added, removed or renamed.
+    /// Recreates the lines after reminders were added, removed or renamed.
     pub fn rebuild(self: &Rc<Self>) {
-        self.list.remove_all();
-        let rows: Vec<Row> = self
-            .cfg
-            .borrow()
-            .reminders
-            .iter()
-            .map(|r| self.make_row(r))
-            .collect();
-        for row in &rows {
-            self.list.append(&row.row);
+        for row in self.rows.take() {
+            self.grid.remove(&row.check);
+            self.grid.remove(&row.name);
+            self.grid.remove(&row.scale);
+            self.grid.remove(&row.value);
         }
+        let reminders = self.cfg.borrow().reminders.clone();
+        let rows: Vec<Row> = reminders
+            .iter()
+            .enumerate()
+            .map(|(i, r)| self.make_row(r, i as i32 + 1))
+            .collect();
         let empty = rows.is_empty();
         self.rows.replace(rows);
-        self.stack
-            .set_visible_child_name(if empty { "empty" } else { "list" });
+        self.heading.set_visible(!empty);
+        self.grid.set_visible(!empty);
+        self.empty.set_visible(empty);
         self.refresh();
     }
 
-    fn make_row(self: &Rc<Self>, r: &Reminder) -> Row {
-        let row = adw::ActionRow::builder()
-            .title(r.display_name())
-            .use_markup(false)
-            .activatable(true)
-            .build();
-        row.add_css_class("countdown");
-        let ring = Ring::new();
-        row.add_prefix(ring.widget());
-        let switch = gtk::Switch::builder()
+    fn make_row(self: &Rc<Self>, r: &Reminder, line: i32) -> Row {
+        let check = gtk::CheckButton::builder()
             .active(r.enabled)
             .valign(gtk::Align::Center)
             .tooltip_text(tr("toggle_reminder"))
             .build();
-        row.add_suffix(&switch);
+        check.update_property(&[gtk::accessible::Property::Label(&r.display_name())]);
+
+        // The name is a flat button: click it to rename or delete.
+        let name = gtk::Button::builder()
+            .child(
+                &gtk::Label::builder()
+                    .label(r.display_name())
+                    .xalign(0.0)
+                    .ellipsize(gtk::pango::EllipsizeMode::End)
+                    .build(),
+            )
+            .halign(gtk::Align::Start)
+            .valign(gtk::Align::Center)
+            .tooltip_text(tr("edit_reminder"))
+            .css_classes(["flat", "reminder-name"])
+            .build();
+
+        let scale = gtk::Scale::with_range(
+            gtk::Orientation::Horizontal,
+            f64::from(MIN_MINUTES),
+            f64::from(MAX_MINUTES),
+            1.0,
+        );
+        scale.set_value(f64::from(r.minutes));
+        scale.set_round_digits(0);
+        scale.set_draw_value(false);
+        scale.set_hexpand(true);
+        scale.set_valign(gtk::Align::Center);
+        scale.set_margin_start(12);
+        scale.update_property(&[gtk::accessible::Property::Label(&r.display_name())]);
+
+        let value = gtk::Label::builder()
+            .label(minutes_label(r.minutes))
+            .xalign(1.0)
+            .width_chars(6)
+            .css_classes(["numeric", "dim-label"])
+            .build();
+
+        self.grid.attach(&check, 0, line, 1, 1);
+        self.grid.attach(&name, 1, line, 1, 1);
+        self.grid.attach(&scale, 2, line, 1, 1);
+        self.grid.attach(&value, 3, line, 1, 1);
 
         let id = r.id;
         let weak = Rc::downgrade(self);
-        row.connect_activated(move |_| {
-            if let Some(ui) = weak.upgrade() {
-                editor::open(&ui, Some(id));
-            }
-        });
-        let weak = Rc::downgrade(self);
-        switch.connect_active_notify(move |switch| {
+        check.connect_toggled(move |check| {
             let Some(ui) = weak.upgrade() else { return };
             if ui.syncing.get() {
                 return;
             }
             if let Some(r) = ui.cfg.borrow_mut().get_mut(id) {
-                r.enabled = switch.is_active();
+                r.enabled = check.is_active();
             }
             ui.commit();
         });
+        let weak = Rc::downgrade(self);
+        name.connect_clicked(move |_| {
+            if let Some(ui) = weak.upgrade() {
+                editor::open(&ui, Some(id));
+            }
+        });
+        let weak = Rc::downgrade(self);
+        let label = value.clone();
+        scale.connect_value_changed(move |scale| {
+            let Some(ui) = weak.upgrade() else { return };
+            let minutes = scale.value().round() as u32;
+            label.set_label(&minutes_label(minutes));
+            if ui.syncing.get() {
+                return;
+            }
+            let changed = match ui.cfg.borrow_mut().get_mut(id) {
+                Some(r) if r.minutes != minutes => {
+                    r.minutes = minutes;
+                    true
+                }
+                _ => false,
+            };
+            if changed {
+                ui.commit_soon();
+            }
+        });
+
         Row {
             id,
-            row,
-            switch,
-            ring,
+            check,
+            name,
+            scale,
+            value,
         }
     }
 
-    /// Brings every label, ring and switch in line with the model.
+    /// Brings the widgets in line with the model and the clocks.
     pub fn refresh(&self) {
         let now = SystemTime::now();
         let cfg = self.cfg.borrow();
@@ -408,8 +583,8 @@ impl Ui {
         };
 
         self.syncing.set(true);
-        self.pause.set_active(cfg.paused);
-        self.banner.set_revealed(cfg.paused);
+        self.master.set_active(!cfg.paused);
+        self.grid.set_sensitive(!cfg.paused);
 
         let subtitle = if cfg.paused {
             tr("paused")
@@ -426,22 +601,23 @@ impl Ui {
 
         for row in self.rows.borrow().iter() {
             let Some(r) = cfg.get(row.id) else { continue };
-            let every = trf("every", &[("n", &r.minutes.to_string())]);
-            let running = !cfg.paused && r.enabled;
-            let state = if cfg.paused {
-                tr("paused")
-            } else if !r.enabled {
-                tr("off")
-            } else {
-                left(r.id).map(clock).unwrap_or_else(|| "–".into())
-            };
-            row.row.set_subtitle(&format!("{every} · {state}"));
-            if row.switch.is_active() != r.enabled {
-                row.switch.set_active(r.enabled);
+            if row.check.is_active() != r.enabled {
+                row.check.set_active(r.enabled);
             }
-            let total = f64::from(r.minutes) * 60.0;
-            let fraction = left(r.id).map_or(0.0, |d| d.as_secs_f64() / total);
-            row.ring.set(fraction, running);
+            row.scale.set_sensitive(r.enabled);
+            row.value.set_sensitive(r.enabled);
+            if row.scale.value().round() as u32 != r.minutes {
+                row.scale.set_value(f64::from(r.minutes));
+            }
+            // Time left, on hover.
+            let tip = match left(r.id) {
+                Some(d) if r.enabled && !cfg.paused => {
+                    trf("next", &[("name", &r.display_name()), ("time", &clock(d))])
+                }
+                _ => String::new(),
+            };
+            row.scale
+                .set_tooltip_text((!tip.is_empty()).then_some(tip.as_str()));
         }
         self.syncing.set(false);
     }

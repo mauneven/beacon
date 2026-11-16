@@ -19,11 +19,13 @@
 
 - **Native GNOME.** GTK 4 and libadwaita: follows your light/dark style,
   accent color, fonts, high contrast and window button layout.
-- **Your reminders.** Each one has its own interval (1 to 240 minutes).
-  Add, rename, delete (with Undo) and turn them on or off.
+- **Your reminders.** Each one has its own check box and a slider for its
+  interval (1 minute to 2 hours). Add, rename and delete (with Undo) your own.
 - **Real notifications.** Reminders arrive as GNOME notifications with a
   **Snooze** button. Click the notification to open Beacon.
-- **Pause everything** with one click, or `Ctrl+P`.
+- **One switch for everything** at the top, or `Ctrl+P`.
+- **Do Not Disturb aware.** If GNOME's Do Not Disturb would hide the
+  reminders, Beacon tells you and offers to turn it off.
 - **Runs in the background.** Closing the window keeps the reminders going.
   Beacon starts with your session (you can turn that off in Preferences).
 - **Sleep aware.** After the computer wakes up, the clocks start over
@@ -69,10 +71,12 @@ To remove it: `sudo make uninstall` (or `make uninstall PREFIX=~/.local`).
 
 ## Use it
 
-1. **Click a reminder** to rename it or change its interval.
-2. **Flip the switch** to turn a reminder on or off. The ring shows how much
-   time is left.
-3. **Close the window.** The reminders keep running. Use **Quit** in the menu
+1. **Drag a slider** to pick how often each reminder comes. Hover it to see
+   the time left.
+2. **Tick the box** to turn a reminder on or off; the switch at the top
+   turns all of them on or off.
+3. **Click a reminder's name** to rename or delete it, and **+** to add one.
+4. **Close the window.** The reminders keep running. Use **Quit** in the menu
    (`Ctrl+Q`) to stop them until the next login.
 
 | Key            | Action              |

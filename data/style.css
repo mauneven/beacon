@@ -1,4 +1,8 @@
 /* Loaded automatically by GtkApplication from the app's resource path. */
-.countdown {
-  font-feature-settings: "tnum";
+
+/* Reminder names are buttons (click to edit) that read like plain labels. */
+button.reminder-name {
+  font-weight: normal;
+  padding-left: 6px;
+  padding-right: 6px;
 }

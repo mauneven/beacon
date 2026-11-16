@@ -15,7 +15,7 @@ use std::path::Path;
 use crate::{i18n, paths};
 
 pub const MIN_MINUTES: u32 = 1;
-pub const MAX_MINUTES: u32 = 240;
+pub const MAX_MINUTES: u32 = 120;
 pub const MIN_SNOOZE: u32 = 1;
 pub const MAX_SNOOZE: u32 = 60;
 
