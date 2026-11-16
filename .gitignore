@@ -1,0 +1,4 @@
+/target
+/packaging/arch/*/
+/packaging/arch/*.tar.gz
+/packaging/arch/*.pkg.tar.*

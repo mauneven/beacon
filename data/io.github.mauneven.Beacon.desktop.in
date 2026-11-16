@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Name=Beacon
+GenericName=Reminders
+Comment=Gentle reminders to look after yourself while you work
+Comment[es]=Recordatorios amables para cuidarte mientras trabajas
+Comment[pt]=Lembretes gentis para você se cuidar enquanto trabalha
+Comment[fr]=De doux rappels pour prendre soin de vous pendant que vous travaillez
+Comment[de]=Sanfte Erinnerungen, damit du bei der Arbeit auf dich achtest
+Comment[it]=Promemoria gentili per prenderti cura di te mentre lavori
+Exec=@BINDIR@/beacon
+Icon=io.github.mauneven.Beacon
+Terminal=false
+StartupNotify=true
+Categories=GNOME;GTK;Utility;
+Keywords=reminder;break;water;stretch;eyes;posture;health;timer;recordatorio;descanso;

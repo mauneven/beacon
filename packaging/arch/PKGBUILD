@@ -1,0 +1,37 @@
+# Maintainer: mauneven
+pkgname=beacon-reminders
+_name=beacon
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Gentle reminders for GNOME"
+arch=('x86_64' 'aarch64')
+url="https://github.com/mauneven/beacon"
+license=('GPL-3.0-or-later')
+depends=('gtk4' 'libadwaita' 'glib2' 'cairo' 'gcc-libs' 'glibc' 'hicolor-icon-theme')
+makedepends=('cargo')
+options=('!lto')
+source=("$_name-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "$_name-$pkgver"
+  export RUSTUP_TOOLCHAIN=stable
+  cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
+}
+
+build() {
+  cd "$_name-$pkgver"
+  export RUSTUP_TOOLCHAIN=stable CARGO_TARGET_DIR=target
+  cargo build --frozen --release
+}
+
+check() {
+  cd "$_name-$pkgver"
+  export RUSTUP_TOOLCHAIN=stable CARGO_TARGET_DIR=target
+  cargo test --frozen --release
+}
+
+package() {
+  cd "$_name-$pkgver"
+  make DESTDIR="$pkgdir" PREFIX=/usr install
+}

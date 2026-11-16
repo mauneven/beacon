@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/io/github/mauneven/Beacon">
+    <file preprocess="xml-stripblanks" alias="icons/scalable/apps/io.github.mauneven.Beacon.svg">icons/hicolor/scalable/apps/io.github.mauneven.Beacon.svg</file>
+    <file preprocess="xml-stripblanks" alias="icons/scalable/apps/io.github.mauneven.Beacon-symbolic.svg">icons/hicolor/symbolic/apps/io.github.mauneven.Beacon-symbolic.svg</file>
+    <file>style.css</file>
+  </gresource>
+</gresources>

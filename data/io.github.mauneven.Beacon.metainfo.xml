@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 mauneven -->
+<component type="desktop-application">
+  <id>io.github.mauneven.Beacon</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Beacon</name>
+  <summary>Gentle reminders to look after yourself</summary>
+  <developer id="io.github.mauneven">
+    <name>mauneven</name>
+  </developer>
+  <description>
+    <p>
+      Beacon nudges you every few minutes to drink water, rest your eyes,
+      stretch or sit up straight. Every reminder has its own interval; when
+      it runs out you get a notification and the clock starts over.
+    </p>
+    <ul>
+      <li>Add, rename and remove reminders, each with its own interval</li>
+      <li>Snooze a reminder right from its notification</li>
+      <li>Pause everything with one click</li>
+      <li>Keeps running after you close the window, using almost no memory</li>
+      <li>Clocks restart quietly after your computer sleeps</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.mauneven.Beacon.desktop</launchable>
+  <provides>
+    <binary>beacon</binary>
+    <binary>beacon-daemon</binary>
+    <dbus type="user">io.github.mauneven.Beacon.Daemon</dbus>
+  </provides>
+  <url type="homepage">https://github.com/mauneven/beacon</url>
+  <url type="bugtracker">https://github.com/mauneven/beacon/issues</url>
+  <url type="vcs-browser">https://github.com/mauneven/beacon</url>
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </supports>
+  <branding>
+    <color type="primary" scheme_preference="light">#99c1f1</color>
+    <color type="primary" scheme_preference="dark">#1a5fb4</color>
+  </branding>
+  <content_rating type="oars-1.1"/>
+  <categories>
+    <category>Utility</category>
+  </categories>
+  <keywords>
+    <keyword>reminder</keyword>
+    <keyword>break</keyword>
+    <keyword>health</keyword>
+  </keywords>
+  <releases>
+    <release version="0.1.0" date="2026-11-16">
+      <description>
+        <p>First release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Beacon
+Comment=Sends Beacon's reminders in the background
+Exec=@BINDIR@/beacon-daemon --gapplication-service
+Icon=io.github.mauneven.Beacon
+Terminal=false
+NoDisplay=true
+DBusActivatable=true
+X-GNOME-UsesNotifications=true
